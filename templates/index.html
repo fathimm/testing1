@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arduino Control Panel and Video Stream</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Arduino Control Panel</h1>
+        <button onclick="sendCommand('RUN_WALLFOLLOWER')">Maju</button>
+        <button onclick="sendCommand('TURN_RIGHT')">Kanan</button>
+        <button onclick="sendCommand('TURN_LEFT')">Kiri</button>
+        <button onclick="sendCommand('CAM_TILT_RIGHT')">Kamera ke kanan</button>
+        <button onclick="sendCommand('CAM_TILT_LEFT')">Kamera ke kiri</button>
+        <button onclick="sendCommand('CAM_FRONT')">Kamera ke depan</button>
+    </div>
+    <div>
+        <h1>Video Stream</h1>
+        <img id="videoStream" src="{{ url_for('video_feed') }}" width="640" height="480">
+        <p id="detectionResult"></p>
+    </div>
+<script>
+    function sendCommand(command) {
+        fetch('/send-command', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ command: command }),
+        });
+    }
+
+    function updateDetectionResult(data) {
+        document.getElementById('detectionResult').innerText = `Detected: ${data.result} (${data.probability}%)`;
+    }
+
+    function startDetection() {
+        setInterval(() => {
+            fetch('/detect-pest')
+               .then(response => response.json())
+               .then(data => updateDetectionResult(data));
+        }, 1000); // Adjust the interval as needed
+    }
+
+    window.onload = startDetection;
+</script>
+</body>
+</html>
