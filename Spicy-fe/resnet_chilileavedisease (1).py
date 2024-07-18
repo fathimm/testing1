@@ -56,10 +56,10 @@ data_transform = torchvision.transforms.Compose([
 """# Dataset Splitting"""
 
 # Path ke direktori dataset utama di Raspberry Pi
-dataset_path = 'C:/Users/USER/.jupyter/lab/workspaces/testing1/dataset_modifikasi' # Ganti dengan path dataset lokal di Raspberry Pi
+dataset_path = '/home/pi/testing6/dataset_modifikasi' # Ganti dengan path dataset lokal di Raspberry Pi
 
 # Path untuk direktori output train, val, dan test
-output_path = 'C:/Users/USER/.jupyter/lab/workspaces/testing1/DatasetModifikasiNew_Split'  # Ganti dengan path output yang diinginkan
+output_path = '/home/pi/testing6/DatasetModifikasiNew_Split'  # Ganti dengan path output yang diinginkan
 os.makedirs(output_path, exist_ok=True)
 
 # Mendapatkan daftar semua kelas (folder) di dataset
@@ -225,47 +225,8 @@ criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
 # Save the model checkpoint
-PATH = 'C:/Users/USER/.jupyter/lab/workspaces/testing1/resnet.pth'  # Ganti dengan path yang diinginkan untuk menyimpan model
+PATH = '/home/pi/testing6/resnet.pth'  # Ganti dengan path yang diinginkan untuk menyimpan model
 torch.save(model.state_dict(), PATH)
-
-# """# Training Loop"""
-#
-# for epoch in range(EPOCH):
-#     model.train()
-#     total_loss = 0
-#     for i, (images, labels) in enumerate(train_loader):
-#         if torch.cuda.is_available():
-#             images, labels = images.cuda(), labels.cuda()
-#
-#         optimizer.zero_grad()
-#         outputs = model(images)
-#         loss = criterion(outputs, labels)
-#         loss.backward()
-#         optimizer.step()
-#         total_loss += loss.item()
-#             print(f"Epoch [{epoch + 1}/{EPOCH}], Loss: {running_loss / len(train_loader):.4f}")
-#
-#     model.eval()
-#     total_correct = 0
-#     with torch.no_grad():
-#         for images, labels in valid_loader:
-#             if torch.cuda.is_available():
-#                 images, labels = images.cuda(), labels.cuda()
-#
-#             outputs = model(images)
-#             _, predicted = torch.max(outputs, 1)
-#             total_correct += (predicted == labels).sum().item()
-#
-      # accuracy = total_correct / len(valid_dataset)
-#      print(f"Validation Loss: {val_loss/len(valid_loader):.4f}, Accuracy: {100 * correct/total:.2f}%")
-#
-#       for epoch in range(EPOCH):
-#            train(model, train_loader, criterion, optimizer, epoch)
-#             validate(model, valid_loader, criterion)
-#
-#     if epoch % 10 == 0:
-#         torch.save(model.state_dict(), PATH)
-
 
 """# Training & Validation"""
 
