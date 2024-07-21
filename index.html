@@ -1,65 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Robot Control Panel</title>
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            padding: 20px;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        padding: 20px;
+      }
 
-        button {
-            padding: 10px 20px;
-            margin: 5px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-        }
+      button {
+        padding: 10px 20px;
+        margin: 5px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+      }
 
-        button:hover {
-            background-color: #0056b3;
-        }
+      button:hover {
+        background-color: #0056b3;
+      }
 
-        #robot-status {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-        }
+      #robot-status {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+      }
     </style>
-</head>
-<body>
+  </head>
+
+  <body>
     <div>
-        <h1>Robot Control Panel</h1>
-        <button onclick="sendCommand('Start')">Start</button>
-        <button onclick="sendCommand('Stop')">Stop</button>
-        <p id="robot-status">Robot is stopped</p>
+      <h1>Robot Control Panel</h1>
+      <button onclick="sendCommand('Start')">Start</button>
+      <button onclick="sendCommand('Stop')">Stop</button>
+      <p id="robot-status">Robot is stopped</p>
     </div>
 
     <script>
-        function sendCommand(command) {
-            fetch('/send-command', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ command: command }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    if (command === 'Start') {
-                        document.getElementById('robot-status').innerHTML = 'Robot is running';
-                    } else if (command === 'Stop') {
-                        document.getElementById('robot-status').innerHTML = 'Robot is stopped';
-                    }
-                }
-            });
-        }
+      function sendCommand(command) {
+        fetch('/send-command', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              command: command
+            }),
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.status === 'success') {
+              if (command === 'Start') {
+                document.getElementById('robot-status').innerHTML = 'Robot is running';
+              } else if (command === 'Stop') {
+                document.getElementById('robot-status').innerHTML = 'Robot is stopped';
+              }
+            }
+          });
+      }
     </script>
-</body>
+  </body>
+
 </html>
