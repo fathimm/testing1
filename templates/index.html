@@ -113,7 +113,7 @@
         });
       }
 
-      function updateDetectionResult(result) {
+      function updateDetectionResult(result_detect) {
         document.getElementById('detectionResult').innerText = result;
       }
 
@@ -121,7 +121,7 @@
         document.getElementById('detectionPercent').innerText = `${data.result} (${data.probability}%)`;
       }
 
-      function updateDetectionGPS(result) {
+      function updateDetectionGPS(result_detect_GPS) {
         document.getElementById('detectionGPS').innerText = result;
       }
 
@@ -130,11 +130,21 @@
           fetch('/detect-pest')
             .then(response => response.json())
             .then(data => updateDetectionResult(data.result))
-            .then(data => detectionPercent(data.result))
-            .then(data => detectionGPS(data.result));
+            .then(data => detectionPercent(data.result)) // Edited
+            // .then(data => detectionGPS(data.result)); // Edited
         }, 1000); // Adjust the interval as needed
       }
 
+      // edited get Distance 
+      function getDistance(){
+        setInterval(()=>{
+          fetch('/get-distance')
+          .then(response => response.json())
+          .then(datas =>updateDetectionGPS(datas.result_detect_GPS));
+        }, 1000);
+      }
+
+      
       window.onload = startDetection;
     </script>
   </body>
