@@ -131,15 +131,15 @@ def gen_frames():
                    b'Content-Type: image/jpeg\r\n\r\n' + b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
-@app.route('/')
+@app.route('/') # root
 def index():
-    return render_template('index.html')
+    return render_template('index.html') # render file html
 
-@app.route('/video_feed')
+@app.route('/video_feed') # nampilin Gambar
 def video_feed():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-@app.route('/send-command', methods=['POST'])
+@app.route('/send-command', methods=['POST']) # command 
 def send_command():
     data = request.json
     command = data['command']
@@ -147,7 +147,7 @@ def send_command():
     ser.write(command.encode())
     return jsonify({'status': 'success'})
 
-@app.route('/detect-pest')
+@app.route('/detect-pest') # detection
 def detect_pest():
     success, frame = camera.read()
     if success:
@@ -167,12 +167,14 @@ def detect_pest():
     else:
         return jsonify({'result': 'No frame detected'})
 
-@app.route('/get-distance')
+@app.route('/get-distance') # ultrasonik
 def get_distance():
     # Read data from Arduino
     data = ser.readline().decode().strip()
     jarak1, jarak2, jarak3 = data.split(',')
-    return jsonify({'jarak1': jarak1, 'jarak2': jarak2, 'jarak3': jarak3})
+    return jsonify({'jarak1': jarak1, 'jarak2': jarak2, 'jarak3': jarak3}) 
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+    # Gunain debug=True kalo mau Trace Error ketika mau running flask
+    #Example  app.run(host='0.0.0.0', port=5000 debug=True)

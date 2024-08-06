@@ -5,7 +5,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Arduino Control Panel and Video Stream</title>
+    <title>Robot Control Panel</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
       integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -42,20 +42,28 @@
         <thead>
           <tr>
             <th>JENIS</th>
-            <th>Persentase (%)</th>
+            <th>Detection Percent (%)</th>
             <th>GPS Data</th>
+            <th>Robot Status </th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>
-              <p id="detectionResult"></p>
+              <p id="detectionResult">
+              </p>
             </td>
             <td>
-              <p id="detectionPercent"></p>
+              <p id="detectionPercent">
+              </p>
             </td>
             <td>
-              <p id="detectionGPS"></p>
+              <p id="detectionGPS">
+            
+              </p>
+            </td>
+            <td>
+              <p id="robot-status"></p>
             </td>
           </tr>
         </tbody>
@@ -67,10 +75,14 @@
       <!-- <h4 class="text-center">Controller</h4> -->
       <div class="row cButon">
         <div class="col-6">
-          <button onclick="sendCommand('RUN_WALLFOLLOWER')" class="btn btn-success starts">START</button>
+          <button onclick="sendCommand('START')" class="btn btn-success starts">START
+          
+          </button>
           <!-- <button onclick="sendCommand('TURN_RIGHT')" class="btn btn-success">Kanan</button>
           <button onclick="sendCommand('TURN_LEFT')" class="btn btn-success">Kiri</button> -->
-          <button onclick="sendCommand('STOP')" class="btn btn-danger">STOP</button>
+          <button onclick="sendCommand('STOP')" class="btn btn-danger">STOP
+            
+          </button>
           <!--  -->
         </div>
         <!-- <h4 class="text-center">Controller</h4> -->
@@ -101,6 +113,7 @@
     </script>
     <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
+      console.log('JS Connected!');
       function sendCommand(command) {
         fetch('/send-command', {
           method: 'POST',
@@ -110,29 +123,52 @@
           body: JSON.stringify({
             command: command
           }),
-        });
+        })
+        .then(response => response.json())
+          .then(data => {
+            if (data.status === 'success') {
+              if (command === 'START') {
+                document.getElementById('robot-status').innerHTML = 'Robot is running';
+              } else if (command === 'STOP') {
+                document.getElementById('robot-status').innerHTML = 'Robot is stopped';
+              }
+            }
+          });
       }
 
       function updateDetectionResult(result) {
         document.getElementById('detectionResult').innerText = result;
       }
 
-      function updateDetectionPercent(result) {
-        document.getElementById('detectionPercent').innerText = `${data.result} (${data.probability}%)`;
+      function updateDetectionPercent(probability) {
+        document.getElementById('detectionPercent').innerText = `${data.probability}%`; // Edited
       }
 
-      function updateDetectionGPS(result) {
-        document.getElementById('detectionGPS').innerText = result;
+      function updateDetectionGPS(result_detect_GPS) {
+        document.getElementById('detectionGPS').innerText = result_detect_GPS;
       }
 
       function startDetection() {
         setInterval(() => {
           fetch('/detect-pest')
             .then(response => response.json())
-            .then(data => updateDetectionResult(data.result))
-            .then(data => detectionPercent(data.result))
-            .then(data => detectionGPS(data.result));
+            .then(data =>{
+              updateDetectionResult(data.result);
+              detectionPercent(data.probability); // Add Get data from detection probability
+            // .then(data => detectionGPS(data.result)); // Edited
+            })
+            .catch(error => console.error('Error fetching detection data:', error)); // Add error Handling
         }, 1000); // Adjust the interval as needed
+      }
+
+      // edited get Distance 
+      function getDistance(){
+        setInterval(()=>{
+          fetch('/get-distance')
+          .then(response => response.json())
+          .then(datas =>updateDetectionGPS(datas.result_detect_GPS)) // Add Get data from sensor
+          .catch(error => console.error('Error fetching detection data:', error)); // Add error Handling
+        }, 1000);
       }
 
       window.onload = startDetection;
